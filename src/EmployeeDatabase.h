@@ -53,6 +53,8 @@ namespace EployeeDatabase {
 
 	private: System::Windows::Forms::Button^ buttonExit;
 	private: System::Windows::Forms::Button^ buttonRefresh;
+	private: System::Windows::Forms::Button^ buttonDelete;
+	private: System::Windows::Forms::Button^ buttonUpdate;
 
 	private: System::Windows::Forms::Panel^ panel3;
 
@@ -63,7 +65,7 @@ namespace EployeeDatabase {
 			//
 			//TODO: Add the constructor code here
 			//
-			EmployeeConnector();
+			EmployeeConnector(); // Establish connection to database.
 		}
 
 	protected:
@@ -92,6 +94,7 @@ namespace EployeeDatabase {
 		void InitializeComponent(void)
 		{
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
+			this->buttonDelete = (gcnew System::Windows::Forms::Button());
 			this->buttonRefresh = (gcnew System::Windows::Forms::Button());
 			this->buttonReset = (gcnew System::Windows::Forms::Button());
 			this->buttonExit = (gcnew System::Windows::Forms::Button());
@@ -109,6 +112,7 @@ namespace EployeeDatabase {
 			this->textBoxLastName = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->textBoxFirstName = (gcnew System::Windows::Forms::TextBox());
+			this->buttonUpdate = (gcnew System::Windows::Forms::Button());
 			this->panel3->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->panel1->SuspendLayout();
@@ -116,6 +120,8 @@ namespace EployeeDatabase {
 			// 
 			// panel3
 			// 
+			this->panel3->Controls->Add(this->buttonUpdate);
+			this->panel3->Controls->Add(this->buttonDelete);
 			this->panel3->Controls->Add(this->buttonRefresh);
 			this->panel3->Controls->Add(this->buttonReset);
 			this->panel3->Controls->Add(this->buttonExit);
@@ -124,6 +130,18 @@ namespace EployeeDatabase {
 			this->panel3->Name = L"panel3";
 			this->panel3->Size = System::Drawing::Size(658, 201);
 			this->panel3->TabIndex = 1;
+			// 
+			// buttonDelete
+			// 
+			this->buttonDelete->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonDelete->Location = System::Drawing::Point(309, 164);
+			this->buttonDelete->Name = L"buttonDelete";
+			this->buttonDelete->Size = System::Drawing::Size(82, 34);
+			this->buttonDelete->TabIndex = 7;
+			this->buttonDelete->Text = L"Delete";
+			this->buttonDelete->UseVisualStyleBackColor = true;
+			this->buttonDelete->Click += gcnew System::EventHandler(this, &MyForm::buttonDelete_Clicked);
 			// 
 			// buttonRefresh
 			// 
@@ -297,6 +315,18 @@ namespace EployeeDatabase {
 			this->textBoxFirstName->Size = System::Drawing::Size(226, 30);
 			this->textBoxFirstName->TabIndex = 3;
 			// 
+			// buttonUpdate
+			// 
+			this->buttonUpdate->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonUpdate->Location = System::Drawing::Point(221, 164);
+			this->buttonUpdate->Name = L"buttonUpdate";
+			this->buttonUpdate->Size = System::Drawing::Size(82, 34);
+			this->buttonUpdate->TabIndex = 8;
+			this->buttonUpdate->Text = L"Update";
+			this->buttonUpdate->UseVisualStyleBackColor = true;
+			this->buttonUpdate->Click += gcnew System::EventHandler(this, &MyForm::buttonUpdate_Clicked);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -304,6 +334,7 @@ namespace EployeeDatabase {
 			this->ClientSize = System::Drawing::Size(884, 561);
 			this->Controls->Add(this->panel3);
 			this->Controls->Add(this->panel1);
+			this->MaximizeBox = false;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->panel3->ResumeLayout(false);
@@ -311,7 +342,6 @@ namespace EployeeDatabase {
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
 			this->ResumeLayout(false);
-			this->MaximizeBox = false; // Prevent maximizing to screen. Cannot scale yet.
 
 		}
 #pragma endregion
@@ -324,9 +354,9 @@ namespace EployeeDatabase {
 			sqlConn->ConnectionString = "datasource=localhost;port=3306;username=root;password=Ep1c@tech1nC0de01!!!;database=employees";
 			sqlConn->Open();
 			sqlCmd->Connection = sqlConn;
-			sqlCmd->CommandText = "Select * from employees.employees";
+			sqlCmd->CommandText = "Select * from employees";
 			sqlReader = sqlCmd->ExecuteReader();
-			sqlDataTable->Load(sqlReader);
+			sqlDataTable->Load(sqlReader);  // Fill table with database contents
 			sqlReader->Close();
 			sqlConn->Close();
 			dataGridView1->DataSource = sqlDataTable;
@@ -335,14 +365,15 @@ namespace EployeeDatabase {
 			   private: System::Void RefreshButton() { // REFRESH BUTTON PRESSED.
 
 				   sqlConn->ConnectionString = "datasource=localhost;port=3306;username=root;password=Ep1c@tech1nC0de01!!!;database=employees";
-				  // sqlConn->Open();
+
 				   sqlCmd->Connection = sqlConn;
 
-				   String^ ID = buttonRefresh->Text;
-				   MySqlDataAdapter^ sqlDataAdapter = gcnew MySqlDataAdapter("select * from employees.employees",sqlConn);
+				   String^ ID = buttonRefresh->Text; 
+				   MySqlDataAdapter^ sqlDataAdapter = gcnew MySqlDataAdapter("select * from employees",sqlConn);
 				   DataTable^ sqlDataTable = gcnew DataTable();
-				   sqlDataAdapter->Fill(sqlDataTable);
+				   sqlDataAdapter->Fill(sqlDataTable); // Fill table with database contents
 				   dataGridView1->DataSource = sqlDataTable;
+				   sqlConn->Close(); // Must always close
 				  
 			   }
 		//==============================================================================================================================
@@ -403,6 +434,69 @@ private: System::Void gridViewCell_Clicked(System::Object^ sender, System::Windo
 		//MessageBox::Show(e->ToString());
 
 	}
+}
+
+private: System::Void buttonDelete_Clicked(System::Object^ sender, System::EventArgs^ e) {
+	// Delete employee from database
+
+	try {
+		sqlConn->ConnectionString = "datasource=localhost;port=3306;username=root;password=Ep1c@tech1nC0de01!!!;database=employees";
+		
+		sqlCmd->Connection = sqlConn;
+
+		// String^ ID = dataGridView1->SelectedRows[0]->Cells[0]->Value->ToString();
+		 String^ ID = textBoxEmployeeNum->Text;
+		MySqlCommand^ sqlCommand = gcnew MySqlCommand("delete * from employees where emp_no =" + ID + "", sqlConn);
+		sqlConn->Open();
+		sqlReader = sqlCommand->ExecuteReader();
+		
+		MessageBox::Show("Record Deleted");
+
+		sqlConn->Close();
+
+	}
+	catch (Exception^ e) {
+		// Do Nothing.
+
+		MessageBox::Show(e->ToString());
+
+	}
+
+}
+private: System::Void buttonUpdate_Clicked(System::Object^ sender, System::EventArgs^ e) {
+	// 
+
+	try {
+		sqlConn->ConnectionString = "datasource=localhost;port=3306;username=root;password=Ep1c@tech1nC0de01!!!;database=employees";
+
+		sqlCmd->Connection = sqlConn;
+
+		String^ hireDate = textBoxHireDate->Text;
+		String^ firstName = textBoxFirstName->Text;
+		String^ lastName = textBoxLastName->Text;
+		String^ gender = textBoxGender->Text;
+		String^ dob = textBoxDOB->Text;
+		String^ empNum = textBoxEmployeeNum->Text;
+
+		sqlCmd->CommandText = "update employee set emp_no = '" + empNum + "', birth_date = " + dob + "', first_name = " + firstName + "', last_name = " + lastName + "', gender" + gender + "', hire_date" + hireDate, sqlConn;
+
+		sqlConn->Open();
+		sqlReader = sqlCmd->ExecuteReader();
+
+		MessageBox::Show("Record Updated");
+		sqlConn->Close();
+
+		EmployeeConnector();
+		RefreshButton();
+
+	}
+	catch (Exception^ e) {
+		// Do Nothing.
+
+		MessageBox::Show(e->ToString());
+
+	}
+
 }
 
 };
