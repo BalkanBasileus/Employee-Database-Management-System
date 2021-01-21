@@ -94,6 +94,8 @@ namespace EployeeDatabase {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::Windows::Forms::DataGridViewCellStyle^ dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^ dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
 			this->buttonAdd = (gcnew System::Windows::Forms::Button());
 			this->buttonUpdate = (gcnew System::Windows::Forms::Button());
@@ -208,9 +210,25 @@ namespace EployeeDatabase {
 			// 
 			// dataGridView1
 			// 
+			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular,
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle1->NullValue = nullptr;
+			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->dataGridView1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dataGridView1->Location = System::Drawing::Point(0, 0);
 			this->dataGridView1->Name = L"dataGridView1";
+			dataGridViewCellStyle2->NullValue = nullptr;
+			this->dataGridView1->RowsDefaultCellStyle = dataGridViewCellStyle2;
+			//this->dataGridView1->RowTemplate->DefaultCellStyle->Format = L"yyyy-MM-dd";
+			// this->dataGridView1->Columns[1]->DefaultCellStyle->Format = L"yyyy-MM-dd";
+			// this->dataGridView1->Columns[5]->DefaultCellStyle->Format = L"yyyy-MM-dd";
+			this->dataGridView1->RowTemplate->DefaultCellStyle->NullValue = nullptr;
 			this->dataGridView1->Size = System::Drawing::Size(658, 158);
 			this->dataGridView1->TabIndex = 0;
 			this->dataGridView1->CellClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MyForm::gridViewCell_Clicked);
@@ -375,6 +393,11 @@ namespace EployeeDatabase {
 			sqlReader->Close();
 			sqlConn->Close();
 			dataGridView1->DataSource = sqlDataTable;
+
+			// Format gridcell with birth_day and hire_date to match formate of database. Windows forms displays it in MM-dd-yyyy. 
+			// Updating does not work unless format is the same.
+			this->dataGridView1->Columns[1]->DefaultCellStyle->Format = L"yyyy-MM-dd";
+			this->dataGridView1->Columns[5]->DefaultCellStyle->Format = L"yyyy-MM-dd";
 		}
 
 			   private: System::Void RefreshButton() { // REFRESH BUTTON PRESSED.
@@ -438,7 +461,7 @@ private: System::Void gridViewCell_Clicked(System::Object^ sender, System::Windo
 		textBoxFirstName->Text = dataGridView1->SelectedRows[0]->Cells[2]->Value->ToString();
 		textBoxLastName->Text = dataGridView1->SelectedRows[0]->Cells[3]->Value->ToString();
 		textBoxEmployeeNum->Text = dataGridView1->SelectedRows[0]->Cells[0]->Value->ToString();
-		textBoxDOB->Text = dataGridView1->SelectedRows[0]->Cells[1]->Value->ToString();
+		textBoxDOB->Text = dataGridView1->SelectedRows[0]->Cells[1]->Value->ToString(); // ->Format(L"yyyy-MM-dd");	// MUST FIND WAY TO FORMAT yyyy-MM-dd WHEN PLACING IN TEXT BOX FOR UPDATE BUTTON.S
 		textBoxGender->Text = dataGridView1->SelectedRows[0]->Cells[4]->Value->ToString();
 		textBoxHireDate->Text = dataGridView1->SelectedRows[0]->Cells[5]->Value->ToString();
 
@@ -512,7 +535,7 @@ private: System::Void buttonUpdate_Clicked(System::Object^ sender, System::Event
 			+ gender + "', hire_date ='" + hireDate + "' WHERE emp_no =" + empNum + "", sqlConn;
 
 		sqlConn->Open();
-		sqlReader = sqlCmd->ExecuteReader();  // ERROR IF DOB AND HIREDATE NO IN "1954-02-01" FORMAT. DISPLAYED IN GRIDVIEWW AS "02/01/1954". **********************************
+		sqlReader = sqlCmd->ExecuteReader();  // ERROR IF DOB AND HIREDATE NOT IN "1954-02-01" FORMAT. DISPLAYED IN GRIDVIEWW AS "02/01/1954". **********************************
 
 		MessageBox::Show("Record Updated");
 		sqlConn->Close();
