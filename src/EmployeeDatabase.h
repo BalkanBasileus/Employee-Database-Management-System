@@ -56,6 +56,8 @@ namespace EployeeDatabase {
 	private: System::Windows::Forms::Button^ buttonDelete;
 	private: System::Windows::Forms::Button^ buttonUpdate;
 	private: System::Windows::Forms::Button^ buttonAdd;
+	private: System::Windows::Forms::Button^ buttonSearch;
+	private: System::Windows::Forms::TextBox^ searchBox;
 
 	private: System::Windows::Forms::Panel^ panel3;
 
@@ -117,6 +119,8 @@ namespace EployeeDatabase {
 			this->textBoxLastName = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->textBoxFirstName = (gcnew System::Windows::Forms::TextBox());
+			this->buttonSearch = (gcnew System::Windows::Forms::Button());
+			this->searchBox = (gcnew System::Windows::Forms::TextBox());
 			this->panel3->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->panel1->SuspendLayout();
@@ -261,6 +265,8 @@ namespace EployeeDatabase {
 			// 
 			// textBoxEmployeeNum
 			// 
+			this->textBoxEmployeeNum->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxEmployeeNum->Location = System::Drawing::Point(137, 200);
 			this->textBoxEmployeeNum->Multiline = true;
 			this->textBoxEmployeeNum->Name = L"textBoxEmployeeNum";
@@ -279,6 +285,8 @@ namespace EployeeDatabase {
 			// 
 			// textBoxGender
 			// 
+			this->textBoxGender->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxGender->Location = System::Drawing::Point(137, 92);
 			this->textBoxGender->Multiline = true;
 			this->textBoxGender->Name = L"textBoxGender";
@@ -297,6 +305,8 @@ namespace EployeeDatabase {
 			// 
 			// textBoxHireDate
 			// 
+			this->textBoxHireDate->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxHireDate->Location = System::Drawing::Point(137, 164);
 			this->textBoxHireDate->Multiline = true;
 			this->textBoxHireDate->Name = L"textBoxHireDate";
@@ -315,6 +325,8 @@ namespace EployeeDatabase {
 			// 
 			// textBoxDOB
 			// 
+			this->textBoxDOB->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxDOB->Location = System::Drawing::Point(137, 128);
 			this->textBoxDOB->Multiline = true;
 			this->textBoxDOB->Name = L"textBoxDOB";
@@ -333,6 +345,8 @@ namespace EployeeDatabase {
 			// 
 			// textBoxLastName
 			// 
+			this->textBoxLastName->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxLastName->Location = System::Drawing::Point(137, 56);
 			this->textBoxLastName->Multiline = true;
 			this->textBoxLastName->Name = L"textBoxLastName";
@@ -351,19 +365,49 @@ namespace EployeeDatabase {
 			// 
 			// textBoxFirstName
 			// 
+			this->textBoxFirstName->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->textBoxFirstName->Location = System::Drawing::Point(137, 20);
 			this->textBoxFirstName->Multiline = true;
 			this->textBoxFirstName->Name = L"textBoxFirstName";
 			this->textBoxFirstName->Size = System::Drawing::Size(226, 30);
 			this->textBoxFirstName->TabIndex = 3;
 			// 
+			// buttonSearch
+			// 
+			this->buttonSearch->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonSearch->Location = System::Drawing::Point(587, 32);
+			this->buttonSearch->Name = L"buttonSearch";
+			this->buttonSearch->Size = System::Drawing::Size(82, 30);
+			this->buttonSearch->TabIndex = 7;
+			this->buttonSearch->Text = L"Search";
+			this->buttonSearch->UseVisualStyleBackColor = true;
+			this->buttonSearch->Click += gcnew System::EventHandler(this, &MyForm::buttonSearch_Clicked);
+			// 
+			// searchBox
+			// 
+			this->searchBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->searchBox->Location = System::Drawing::Point(396, 32);
+			this->searchBox->Multiline = true;
+			this->searchBox->Name = L"searchBox";
+			this->searchBox->Size = System::Drawing::Size(185, 30);
+			this->searchBox->TabIndex = 8;
+			this->searchBox->Text = L"Enter Firstname";
+			this->searchBox->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::searchBox_MouseClicked);
+			this->searchBox->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MyForm::searchBox_EnterKeyPressed);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(683, 561);
+			this->Controls->Add(this->searchBox);
+			this->Controls->Add(this->buttonSearch);
 			this->Controls->Add(this->panel3);
 			this->Controls->Add(this->panel1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->MaximizeBox = false;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
@@ -372,7 +416,7 @@ namespace EployeeDatabase {
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
 			this->ResumeLayout(false);
-			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle; // Prevent App resize by user.
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -440,7 +484,7 @@ private: System::Void buttonRefresh_Clicked(System::Object^ sender, System::Even
 
 // Button Reset Pressed
 private: System::Void buttonReset_Clicked(System::Object^ sender, System::EventArgs^ e) {
-	// Resets proile display
+	// Resets proile display and search bar
 
 	textBoxFirstName->Text = "";
 	textBoxLastName->Text = "";
@@ -448,6 +492,8 @@ private: System::Void buttonReset_Clicked(System::Object^ sender, System::EventA
 	textBoxDOB->Text = "";
 	textBoxHireDate->Text = "";
 	textBoxEmployeeNum->Text = "";
+
+	searchBox->Text = "Enter Firstname";
 }
 
 
@@ -588,6 +634,42 @@ private: System::Void buttonAdd_Clicked(System::Object^ sender, System::EventArg
 		MessageBox::Show(e->ToString());
 	}
 
+}
+private: System::Void buttonSearch_Clicked(System::Object^ sender, System::EventArgs^ e) {
+	// 
+
+	try {
+	
+		DataView^ dv = sqlDataTable->DefaultView;
+		dv->RowFilter = String::Format("first_name like '%{0}%'", searchBox->Text);
+		dataGridView1->DataSource = dv->ToTable();
+
+	}
+	catch (Exception^ e) {
+		MessageBox::Show(e->ToString());
+	}
+}
+private: System::Void searchBox_EnterKeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e) {
+	// 
+
+	try {
+
+		if (e->KeyChar == (Char)13) {
+			
+			DataView^ dv = sqlDataTable->DefaultView;
+			dv->RowFilter = String::Format("first_name like '%{0}%'", searchBox->Text);
+			dataGridView1->DataSource = dv->ToTable();
+		}
+
+	}
+	catch (Exception^ e) {
+		MessageBox::Show(e->ToString());
+	}
+}
+private: System::Void searchBox_MouseClicked(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+	// Clicked on searchBox with display "Enter Firstname". Clears display to enter employee name.
+
+	searchBox->Text = "";
 }
 };
 }
